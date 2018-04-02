@@ -1,0 +1,57 @@
+
+#include <Wire.h>
+#include "hcsr04.h"
+
+#define TRIG_PIN_LeftRear 22
+#define ECHO_PIN_LeftRear 23
+#define TRIG_PIN_LeftFront 40
+#define ECHO_PIN_LeftFront 41
+#define TRIG_PIN_RightRear 26
+#define ECHO_PIN_RightRear 27
+#define TRIG_PIN_RightFront 36
+#define ECHO_PIN_RightFront 37
+#define TRIG_PIN_RearRight 25
+#define ECHO_PIN_RearRight 24
+#define TRIG_PIN_RearLeft 28
+#define ECHO_PIN_RearLeft 29
+
+HCSR04 hcsr04LeftRear = HCSR04(ECHO_PIN_LeftRear,TRIG_PIN_LeftRear);
+HCSR04 hcsr04LeftFront = HCSR04(ECHO_PIN_LeftFront,TRIG_PIN_LeftFront);
+HCSR04 hcsr04RightRear = HCSR04(ECHO_PIN_RightRear,TRIG_PIN_RightRear);
+HCSR04 hcsr04RightFront = HCSR04(ECHO_PIN_RightFront,TRIG_PIN_RightFront);
+HCSR04 hcsr04RearRight = HCSR04(ECHO_PIN_RearRight,TRIG_PIN_RearRight);
+HCSR04 hcsr04RearLeft = HCSR04(ECHO_PIN_RearLeft,TRIG_PIN_RearLeft);
+
+long a;
+long b;
+long c;
+long d;
+long e;
+long f;
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  //ultrasonic sensors
+  a = hcsr04LeftRear.distanceInMillimeters();
+  Serial.print(a);
+  Serial.println("mmLeftRear");
+  b = hcsr04LeftFront.distanceInMillimeters();
+  Serial.print(b);
+  Serial.println("mmLeftFront");
+  c = hcsr04RightRear.distanceInMillimeters();
+  Serial.print(c);
+  Serial.println("mmRightRear");
+  d = hcsr04RightFront.distanceInMillimeters();
+  Serial.print(d);
+  Serial.println("mmRightFront");
+  e = hcsr04RearRight.distanceInMillimeters();
+  Serial.print(e);
+  Serial.println("mmRearRight");
+  f = hcsr04RearLeft.distanceInMillimeters();
+  Serial.print(f);
+  Serial.println("mmRearLeft");
+  delay(1000);
+}
