@@ -1,0 +1,14 @@
+
+int pump = 34;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(pump, OUTPUT);
+}
+
+void loop() {
+  digitalWrite(pump, HIGH);
+  delay(5000);
+  digitalWrite(pump, LOW);
+  delay(5000);
+}
