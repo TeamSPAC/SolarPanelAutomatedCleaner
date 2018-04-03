@@ -1,9 +1,43 @@
 
+/*
+ * ======================================================================================
+ * 
+ * Solar Panel Automated Cleaner
+ * Written by: Aaron Hale
+ * 2018 Senior Design
+ * Mississippi State University
+ * Team: Dylan Nolan, Daniel Coats, Scott Watson, Aaron Hale
+ * 
+ * ======================================================================================
+*/
+
+/*
+ * #include includes the necessary libraries for the arduino to implement different 
+ * components of SPAC
+ */
 #include <Wire.h>
 #include <Adafruit_MotorShield.h>
 #include "utility/Adafruit_MS_PWMServoDriver.h"
 #include "hcsr04.h"
 
+/*
+ * #define allows us to define what pin values are associated to the trig and echo 
+ * pins of the ultrasonic sensors.
+ * 
+ *            -----------------------
+ *LeftFront-> |                      | <-RightFront
+ *            |                      |
+ *            |                      |
+ *            |                      |
+ *            |                      |
+ *            |                      |
+ *LeftRear->  |                      | <-RightRear
+ *            -----------------------
+ *              ^                 ^
+ *              |                 |
+ *           RearLeft         RearRight
+ */
+ 
 #define TRIG_PIN_LeftRear 22
 #define ECHO_PIN_LeftRear 23
 #define TRIG_PIN_LeftFront 40
@@ -17,12 +51,22 @@
 #define TRIG_PIN_RearLeft 28
 #define ECHO_PIN_RearLeft 29
 
+/*
+ * Using the HCSR04 library we can use the defined pin values to set up the ultrasonics 
+ * for use in the code.
+ */
+ 
 HCSR04 hcsr04LeftRear = HCSR04(ECHO_PIN_LeftRear,TRIG_PIN_LeftRear);
 HCSR04 hcsr04LeftFront = HCSR04(ECHO_PIN_LeftFront,TRIG_PIN_LeftFront);
 HCSR04 hcsr04RightRear = HCSR04(ECHO_PIN_RightRear,TRIG_PIN_RightRear);
 HCSR04 hcsr04RightFront = HCSR04(ECHO_PIN_RightFront,TRIG_PIN_RightFront);
 HCSR04 hcsr04RearRight = HCSR04(ECHO_PIN_RearRight,TRIG_PIN_RearRight);
 HCSR04 hcsr04RearLeft = HCSR04(ECHO_PIN_RearLeft,TRIG_PIN_RearLeft);
+
+/*
+ * Next using the motorshield library we can set up the motorshield for use. We can now
+ * name each of the motors for use throughout the code.
+ */
 
 Adafruit_MotorShield AFMS = Adafruit_MotorShield(); 
 
@@ -31,21 +75,56 @@ Adafruit_DCMotor *MotorRight1 = AFMS.getMotor(2);
 Adafruit_DCMotor *MotorLeft2 = AFMS.getMotor(3);
 Adafruit_DCMotor *MotorRight2 = AFMS.getMotor(4);
 
+/*
+ * Now we need to define some variables for the code. Each one needs to be given a type and a name. 
+ * The first few are used for helping with distance knowledge.
+ */
+
 unsigned long starttime;
 unsigned long endtime;
 unsigned long accumtime;
 unsigned long timeddistance;
 unsigned long accumdistance;
 int starttimer;
+
+/*
+ * The following letters are used for ultrasonic values.
+ * a - leftrear
+ * b - leftfront
+ * c - rightrear
+ * d - rightfront
+ * e - rearright
+ * f - rearleft
+ */
+ 
 long a;
 long b;
 long c;
 long d;
 long e;
 long f;
+
+/*
+ * Counter were used before timing. We left them just in case we want to go back to using it.
+ */
+ 
 int counterlength;
 int counterwidth;
 float distance;
+
+/*
+ * Next we have a few to keep up with what the robot has done so that we can skip sections if 
+ * it has already done them.
+ * turns - how many turns it has taken
+ * forward - moving forward
+ * last - uses left and right values as knowledge as to what turn the robot made last
+ * forwardleft - the robot started at the bottom left of the panel
+ * forward right - the robot started at the bottom right of the panel
+ * almost - almost done
+ * done - done cleaning
+ * turnaround - done cleaning and needs to turn around because it stopped on he wrong side of the panel from where it started
+ */
+ 
 int turns;
 int forward;
 int last;
@@ -53,15 +132,29 @@ int right;
 int left;
 int forwardleft;
 int forwardright;
-float voltage = 0.0;
-int value = 0;
-float temp = 0.0;
 int almost;
 int done;
 int turnaround;
 
+/*
+ * The next ones are for the voltage sensor calculations to give voltage
+ * 
+ */
+ 
+float voltage = 0.0;
+int value = 0;
+float temp = 0.0;
 
+/*
+ * void setup allows us to setup different values and pins based on naming.
+ */
+ 
 void setup() {
+
+  /*
+   * setup to initialize
+   */
+   
   turnaround = 0;
   almost = 0;
   done = 0;
@@ -69,33 +162,59 @@ void setup() {
   counterwidth = 0;
   turns = 0;
   forward = 0;
-  //last uses right and left ints to distinguish what turn was made last
   last = 0;
-  //lets make right = 1
-  right = 1;
-  //lets make left = 2
-  left = 2;
-  pinMode(30,INPUT);
-  pinMode(33,INPUT);
-  AFMS.begin();
-  MotorLeft1->setSpeed(247); //left rear
-  MotorRight1->setSpeed(241);
-  MotorLeft2->setSpeed(247); //left front
-  MotorRight2->setSpeed(241);
+  right = 1; //lets make right = 1
+  left = 2; //lets make left = 2
+  pinMode(30,INPUT); //pin 30 (IR Sensor) is an input value of 0 or 1
+  pinMode(33,INPUT); //pin 33(IR Sensor) is an input value of 0 or 1
+
+  /*
+   * lets initialize the motors
+   */
+   
+  AFMS.begin(); // start the motors
+  MotorLeft1->setSpeed(247); //left rear speed set
+  MotorRight1->setSpeed(241); //right speed set
+  MotorLeft2->setSpeed(247); //left front speed set
+  MotorRight2->setSpeed(241); //right speed set
+
+  /*
+   * begin serial communication baud rate set to 9600
+   */
+   
   Serial.begin(9600);
+
+  /*
+   * delay 1 second after setup
+   */
+   
   delay(1000);
 
+  /*
+   * starttime is set to millis() which is an arduino library using milliseconds
+   */
+   
   starttime = millis();
 }
 
+/*
+ * This loop is what runs the entire robot. This allows us continuously read inputs and 
+ * look at if statements based on the values. These if statements in turn do more steps
+ * of what the robot should do then move on to do the next thing.
+ */
+ 
 void loop() {
-  //voltage reading
-  value = analogRead(38);
-  temp = (value / 4.092);
-  voltage = (temp / 10);
-  Serial.print("Input V = ");
-  Serial.println(voltage + 3);
-  //ultrasonic sensors
+  
+  value = analogRead(38); //voltage reading
+  temp = (value / 4.092); //voltage reading math
+  voltage = (temp / 10); //voltage reading math
+  Serial.print("Input V = "); //serial communication print
+  Serial.println(voltage + 3); //serial communication print
+  
+/*
+ * The next read all of the ultrasonic sensors and print them over the serial communication
+ */
+ 
   a = hcsr04LeftRear.distanceInMillimeters();
   Serial.print(a);
   Serial.println("mmLeftRear");
@@ -114,7 +233,11 @@ void loop() {
   f = hcsr04RearLeft.distanceInMillimeters();
   Serial.print(f);
   Serial.println("mmRearLeft");
-  //IR sensors
+
+/*
+ * the next read and print the IR Sensor Values
+ */
+  
   int irreadFront = digitalRead(33);
   Serial.print(irreadFront);
   Serial.println("IRFront");
@@ -123,513 +246,702 @@ void loop() {
   Serial.println("IRRear");
 
   if (counterlength == 0) {
-   starttime = millis();
+    starttime = millis(); //start the timer
   }
- //For testing purposes were starting at the bottom right.. lets run forward with the right sensor reading edge
+  
+ /*
+  * lets run forward with the right rear sensor reading off the edge
+  */
+  
   if (not done and counterwidth == 0 and ((c < 200 and d < 200 and not irreadFront and not irreadRear) or (c < 200 and d < 200 and irreadFront and not irreadRear))) {
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(FORWARD);
-  delay(100);
-  forwardright = 1;
-  forwardleft = 0;
-  counterlength = counterlength + 1;
-  Serial.println("1");
-  }
-  else if (not done and counterwidth == 0 and (forwardright and last == 0 and ((c < 200 and not irreadFront and not irreadRear) or (c < 200 and irreadFront and not irreadRear)))) {
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(BACKWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(BACKWARD);
-  delay(50);
-  Serial.println("TRY TO REDIRECT RIGHT");
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(FORWARD);
-  counterlength = counterlength + 1;
-  delay(200);  
-  }
-  else if (not done and counterwidth == 0 and (forwardright and last == 0 and ((d > 200 and not irreadFront and not irreadRear) or (d > 200 and irreadFront and not irreadRear)))) {
-  MotorLeft1->run(BACKWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(BACKWARD);
-  MotorRight2->run(FORWARD);
-  delay(50);
-  Serial.println("TRY TO REDIRECT RIGHT");
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(FORWARD);
-  counterlength = counterlength + 1;
-  delay(200);  
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(FORWARD);
+    
+    delay(100);
+    
+    forwardright = 1;
+    forwardleft = 0;
+    counterlength = counterlength + 1;
+    
+    Serial.println("1"); //debugging tool to tell what if statement was entered
   }
 
-  //same thing but for the left sensor
+  /*
+   * else, we need to fix the orientation keeping the robot straight
+   */
+   
+  else if (not done and counterwidth == 0 and (forwardright and last == 0 and ((c < 200 and not irreadFront and not irreadRear) or (c < 200 and irreadFront and not irreadRear)))) {
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(BACKWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(BACKWARD);
+    
+    delay(50);
+    
+    Serial.println("TRY TO REDIRECT RIGHT");
+    
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(FORWARD);
+    
+    counterlength = counterlength + 1;
+    
+    delay(200);  
+  }
+  
+  else if (not done and counterwidth == 0 and (forwardright and last == 0 and ((d > 200 and not irreadFront and not irreadRear) or (d > 200 and irreadFront and not irreadRear)))) {
+    MotorLeft1->run(BACKWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(BACKWARD);
+    MotorRight2->run(FORWARD);
+    
+    delay(50);
+    
+    Serial.println("TRY TO REDIRECT RIGHT");
+    
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(FORWARD);
+    
+    counterlength = counterlength + 1;
+    
+    delay(200);  
+  }
+
+  /*
+   * we need to do the same thing but for if the robot is set on the left side and the left rear sensor is reading off the edge
+   */
+   
   if (not done and counterwidth == 0 and ((a > 200 and b < 200 and not irreadFront and not irreadRear) or (a > 200 and b < 200 and irreadFront and not irreadRear))) {
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(FORWARD);
-  delay(100);
-  forwardleft = 1;
-  forwardright = 0;
-  counterlength = counterlength + 1;
-  Serial.println("2");
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(FORWARD);
+    
+    delay(100);
+    
+    forwardleft = 1;
+    forwardright = 0;
+    counterlength = counterlength + 1;
+    
+    Serial.println("2");
   }
+  
   else if (not done and counterwidth == 0 and (forwardleft and last == 0 and ((a < 200 and not irreadFront and not irreadRear) or (a < 200 and irreadFront and not irreadRear)))) {
-  MotorLeft1->run(BACKWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(BACKWARD);
-  MotorRight2->run(FORWARD);
-  delay(50);
-  Serial.println("TRY TO REDIRECT LEFT");
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(FORWARD);
-  counterlength = counterlength + 1;
-  delay(200);  
+    MotorLeft1->run(BACKWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(BACKWARD);
+    MotorRight2->run(FORWARD);
+    
+    delay(50);
+    
+    Serial.println("TRY TO REDIRECT LEFT");
+    
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(FORWARD);
+    
+    counterlength = counterlength + 1;
+    
+    delay(200);  
   }
+  
   else if (not done and counterwidth == 0 and (forwardleft and last == 0 and ((b > 200 and not irreadFront and not irreadRear) or (b > 200 and irreadFront and not irreadRear)))) {
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(BACKWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(BACKWARD);
-  delay(50);
-  Serial.println("TRY TO REDIRECT LEFT");
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(FORWARD);
-  counterlength = counterlength + 1;
-  delay(200);  
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(BACKWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(BACKWARD);
+    
+    delay(50);
+    
+    Serial.println("TRY TO REDIRECT LEFT");
+    
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(FORWARD);
+    
+    counterlength = counterlength + 1;
+    
+    delay(200);  
   }
 
   //now for width
   if (not done and turns == 1 and counterlength > 0 and ((c > 200 and d < 200 and not irreadFront and not irreadRear) or (c > 200 and d < 200 and irreadFront and not irreadRear))) {
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(FORWARD);
-  delay(100);
-  forwardright = 1;
-  forwardleft = 0;
-  counterwidth = counterwidth + 1;
-  Serial.println("1");
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(FORWARD);
+    
+    delay(100);
+    
+    forwardright = 1;
+    forwardleft = 0;
+    counterwidth = counterwidth + 1;
+    
+    Serial.println("1");
   }
+  
   else if (not done and turns == 1 and counterlength > 0 and (forwardright and last == 0 and ((c < 200 and not irreadFront and not irreadRear) or (c < 200 and irreadFront and not irreadRear)))) {
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(BACKWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(BACKWARD);
-  delay(50);
-  Serial.println("TRY TO REDIRECT LEFT");
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(FORWARD);
-  counterwidth = counterwidth + 1;
-  delay(200);  
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(BACKWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(BACKWARD);
+    
+    delay(50);
+    
+    Serial.println("TRY TO REDIRECT LEFT");
+    
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(FORWARD);
+    
+    counterwidth = counterwidth + 1;
+    
+    delay(200);  
   }
+  
  else if (not done and turns == 1 and counterlength > 0 and (forwardright and last == 0 and ((d > 200 and not irreadFront and not irreadRear) or (d > 200 and irreadFront and not irreadRear)))) {
   MotorLeft1->run(BACKWARD);  
   MotorRight1->run(FORWARD);  
   MotorLeft2->run(BACKWARD);
   MotorRight2->run(FORWARD);
+  
   delay(50);
+  
   Serial.println("TRY TO REDIRECT LEFT");
+  
   MotorLeft1->run(FORWARD);  
   MotorRight1->run(FORWARD);  
   MotorLeft2->run(FORWARD);
   MotorRight2->run(FORWARD);
+  
   counterwidth = counterwidth + 1;
+  
   delay(200);  
   }
 
   //same thing but for the left sensor
   if (not done and turns == 1 and counterlength > 0 and ((a > 200 and b < 200 and not irreadFront and not irreadRear) or (a > 200 and b < 200 and irreadFront and not irreadRear))) {
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(FORWARD);
-  forwardleft = 1;
-  forwardright = 0;
-  counterwidth = counterwidth + 1;
-  Serial.println("2");
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(FORWARD);
+    
+    forwardleft = 1;
+    forwardright = 0;
+    counterwidth = counterwidth + 1;
+    
+    Serial.println("2");
   }
+  
   else if (not done and turns == 1 and counterlength > 0 and (forwardleft and last == 0 and ((a < 200 and not irreadFront and not irreadRear) or (a < 200 and irreadFront and not irreadRear)))) {
-  MotorLeft1->run(BACKWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(BACKWARD);
-  MotorRight2->run(FORWARD);
-  delay(50);
-  Serial.println("TRY TO REDIRECT LEFT");
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(FORWARD);
-  counterwidth = counterwidth + 1;
-  delay(200);  
+    MotorLeft1->run(BACKWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(BACKWARD);
+    MotorRight2->run(FORWARD);
+    
+    delay(50);
+    
+    Serial.println("TRY TO REDIRECT LEFT");
+    
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(FORWARD);
+    
+    counterwidth = counterwidth + 1;
+    
+    delay(200);  
   }
+  
   else if (not done and turns == 1 and counterlength > 0 and (forwardleft and last == 0 and ((b > 200 and not irreadFront and not irreadRear) or (b > 200 and irreadFront and not irreadRear)))) {
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(BACKWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(BACKWARD);
-  delay(50);
-  Serial.println("TRY TO REDIRECT LEFT");
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(FORWARD);
-  counterwidth = counterwidth + 1;
-  delay(200);  
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(BACKWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(BACKWARD);
+    
+    delay(50);
+    
+    Serial.println("TRY TO REDIRECT LEFT");
+    
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(FORWARD);
+    
+    counterwidth = counterwidth + 1;
+    
+    delay(200);  
   }
   
   //next we start our turns tally.. turns now equal 0.. plus one after we make our first turn and head left across the top
   if (not done and turns == 0 and forwardright and irreadFront and irreadRear) {
-  endtime = millis();
-  accumtime = endtime - starttime;
-  Serial.print(starttime);
-  Serial.println("starttime");
-  Serial.print(endtime);
-  Serial.println("endtime");
-  Serial.print(accumtime);
-  Serial.println("accumtime");
-  MotorLeft1->run(RELEASE);  
-  MotorRight1->run(RELEASE);  
-  MotorLeft2->run(RELEASE);
-  MotorRight2->run(RELEASE);
-  Serial.println("3");
-  MotorLeft1->run(BACKWARD);  
-  MotorRight1->run(BACKWARD);  
-  MotorLeft2->run(BACKWARD);
-  MotorRight2->run(BACKWARD);
-  delay(900);
-  MotorLeft1->run(BACKWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(BACKWARD);
-  MotorRight2->run(FORWARD);
-  delay(2500);
-  // TEST stop to allow the sensors to regain position to make the next step
-  MotorLeft1->run(RELEASE);  
-  MotorRight1->run(RELEASE);  
-  MotorLeft2->run(RELEASE);
-  MotorRight2->run(RELEASE);
-  delay(500);
-  turns = 1;
-  Serial.println("4");
-  return; 
+    endtime = millis();
+    accumtime = endtime - starttime;
+    Serial.print(starttime);
+    Serial.println("starttime");
+    Serial.print(endtime);
+    Serial.println("endtime");
+    Serial.print(accumtime);
+    Serial.println("accumtime");
+    
+    MotorLeft1->run(RELEASE);  
+    MotorRight1->run(RELEASE);  
+    MotorLeft2->run(RELEASE);
+    MotorRight2->run(RELEASE);
+    
+    Serial.println("3");
+    
+    MotorLeft1->run(BACKWARD);  
+    MotorRight1->run(BACKWARD);  
+    MotorLeft2->run(BACKWARD);
+    MotorRight2->run(BACKWARD);
+    
+    delay(900);
+    
+    MotorLeft1->run(BACKWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(BACKWARD);
+    MotorRight2->run(FORWARD);
+    
+    delay(2500);
+    
+    // TEST stop to allow the sensors to regain position to make the next step
+    MotorLeft1->run(RELEASE);  
+    MotorRight1->run(RELEASE);  
+    MotorLeft2->run(RELEASE);
+    MotorRight2->run(RELEASE);
+    
+    delay(500);
+    
+    turns = 1;
+    
+    Serial.println("4");
+    
+    return; 
   }
+  
   //same thing with left sensor
   if (not done and turns == 0 and forwardleft and irreadFront and irreadRear) {
-  endtime = millis();
-  accumtime = endtime - starttime;
-  MotorLeft1->run(RELEASE);  
-  MotorRight1->run(RELEASE);  
-  MotorLeft2->run(RELEASE);
-  MotorRight2->run(RELEASE);
-  Serial.println("5");
-  MotorLeft1->run(BACKWARD);  
-  MotorRight1->run(BACKWARD);  
-  MotorLeft2->run(BACKWARD);
-  MotorRight2->run(BACKWARD);
-  delay(900);
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(BACKWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(BACKWARD);
-  delay(2900);
-  // TEST stop to allow the sensors to regain position to make the next step
-  MotorLeft1->run(RELEASE);  
-  MotorRight1->run(RELEASE);  
-  MotorLeft2->run(RELEASE);
-  MotorRight2->run(RELEASE);
-  delay(500);
-  turns = 1;
-  Serial.println("6");
-  return; 
+    endtime = millis();
+    accumtime = endtime - starttime;
+    
+    MotorLeft1->run(RELEASE);  
+    MotorRight1->run(RELEASE);  
+    MotorLeft2->run(RELEASE);
+    MotorRight2->run(RELEASE);
+    
+    Serial.println("5");
+    
+    MotorLeft1->run(BACKWARD);  
+    MotorRight1->run(BACKWARD);  
+    MotorLeft2->run(BACKWARD);
+    MotorRight2->run(BACKWARD);
+    
+    delay(900);
+    
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(BACKWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(BACKWARD);
+    
+    delay(2900);
+    
+    // TEST stop to allow the sensors to regain position to make the next step
+    MotorLeft1->run(RELEASE);  
+    MotorRight1->run(RELEASE);  
+    MotorLeft2->run(RELEASE);
+    MotorRight2->run(RELEASE);
+    
+    delay(500);
+    
+    turns = 1;
+    
+    Serial.println("6");
+    
+    return; 
   }
   
   //once we see the left top edge we need to turn to go down.. now we need to go down for a little while.. then we need to turn back to go right across
   if (not done and turns == 1 and c > 200 and d < 200 and irreadFront and irreadRear){
-  Serial.print(counterlength);
-  Serial.println("count");
-  distance = (counterlength * 33.87);
-  MotorLeft1->run(RELEASE);  
-  MotorRight1->run(RELEASE);  
-  MotorLeft2->run(RELEASE);
-  MotorRight2->run(RELEASE);
-  Serial.println("7"); 
-  MotorLeft1->run(BACKWARD);  
-  MotorRight1->run(BACKWARD);  
-  MotorLeft2->run(BACKWARD);
-  MotorRight2->run(BACKWARD);
-  delay(900);
-  MotorLeft1->run(BACKWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(BACKWARD);
-  MotorRight2->run(FORWARD);
-  delay(2700);
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(FORWARD);
-  delay(2500);
-  accumdistance = 2500;
-  MotorLeft1->run(BACKWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(BACKWARD);
-  MotorRight2->run(FORWARD);
-  delay(2500);
-  MotorLeft1->run(RELEASE);  
-  MotorRight1->run(RELEASE);  
-  MotorLeft2->run(RELEASE);
-  MotorRight2->run(RELEASE);
-  delay(500);
-  last = left;
-  turns = 2;
-  Serial.println("8");
+    Serial.print(counterlength);
+    Serial.println("count");
+    distance = (counterlength * 33.87);
+    
+    MotorLeft1->run(RELEASE);  
+    MotorRight1->run(RELEASE);  
+    MotorLeft2->run(RELEASE);
+    MotorRight2->run(RELEASE);
+    
+    Serial.println("7"); 
+    
+    MotorLeft1->run(BACKWARD);  
+    MotorRight1->run(BACKWARD);  
+    MotorLeft2->run(BACKWARD);
+    MotorRight2->run(BACKWARD);
+    
+    delay(900);
+    
+    MotorLeft1->run(BACKWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(BACKWARD);
+    MotorRight2->run(FORWARD);
+    
+    delay(2700);
+    
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(FORWARD);
+    
+    delay(2500);
+    
+    accumdistance = 2500;
+    
+    MotorLeft1->run(BACKWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(BACKWARD);
+    MotorRight2->run(FORWARD);
+    
+    delay(2500);
+    
+    MotorLeft1->run(RELEASE);  
+    MotorRight1->run(RELEASE);  
+    MotorLeft2->run(RELEASE);
+    MotorRight2->run(RELEASE);
+    
+    delay(500);
+    
+    last = left;
+    turns = 2;
+    
+    Serial.println("8");
   } 
 
 
   if (not done and turns == 1 and (c < 200 or d > 200) and irreadFront and irreadRear){
-  MotorLeft1->run(RELEASE);  
-  MotorRight1->run(RELEASE);  
-  MotorLeft2->run(RELEASE);
-  MotorRight2->run(RELEASE);
-  Serial.println("7"); 
-  MotorLeft1->run(BACKWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(BACKWARD);
-  MotorRight2->run(FORWARD);
-  delay(100);
-  MotorLeft1->run(BACKWARD);  
-  MotorRight1->run(BACKWARD);  
-  MotorLeft2->run(BACKWARD);
-  MotorRight2->run(BACKWARD);
-  delay(300);
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(BACKWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(BACKWARD);
-  delay(50);
+    MotorLeft1->run(RELEASE);  
+    MotorRight1->run(RELEASE);  
+    MotorLeft2->run(RELEASE);
+    MotorRight2->run(RELEASE);
+    
+    Serial.println("7"); 
+    
+    MotorLeft1->run(BACKWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(BACKWARD);
+    MotorRight2->run(FORWARD);
+    
+    delay(100);
+    
+    MotorLeft1->run(BACKWARD);  
+    MotorRight1->run(BACKWARD);  
+    MotorLeft2->run(BACKWARD);
+    MotorRight2->run(BACKWARD);
+    
+    delay(300);
+    
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(BACKWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(BACKWARD);
+    
+    delay(50);
   }
+  
   //same thing just left
   //once we see the left top edge we need to turn to go down.. now we need to go down for a little while.. then we need to turn back to go right across
   if (not done and turns == 1 and a > 200 and b < 200 and irreadFront and irreadRear){
-  distance = (counterlength * 33.87);
-  MotorLeft1->run(RELEASE);  
-  MotorRight1->run(RELEASE);  
-  MotorLeft2->run(RELEASE);
-  MotorRight2->run(RELEASE);
-  Serial.println("9"); 
-  MotorLeft1->run(BACKWARD);  
-  MotorRight1->run(BACKWARD);  
-  MotorLeft2->run(BACKWARD);
-  MotorRight2->run(BACKWARD);
-  delay(900);
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(BACKWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(BACKWARD);
-  delay(2700);
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(FORWARD);
-  delay(2500);
-  accumdistance = 2500;
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(BACKWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(BACKWARD);
-  delay(2700);
-  MotorLeft1->run(RELEASE);  
-  MotorRight1->run(RELEASE);  
-  MotorLeft2->run(RELEASE);
-  MotorRight2->run(RELEASE);
-  delay(500);
-  last = right;
-  turns = 2;
-  Serial.println("10");
+    distance = (counterlength * 33.87);
+    
+    MotorLeft1->run(RELEASE);  
+    MotorRight1->run(RELEASE);  
+    MotorLeft2->run(RELEASE);
+    MotorRight2->run(RELEASE);
+    
+    Serial.println("9"); 
+    
+    MotorLeft1->run(BACKWARD);  
+    MotorRight1->run(BACKWARD);  
+    MotorLeft2->run(BACKWARD);
+    MotorRight2->run(BACKWARD);
+    
+    delay(900);
+    
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(BACKWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(BACKWARD);
+    
+    delay(2700);
+    
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(FORWARD);
+    
+    delay(2500);
+    
+    accumdistance = 2500;
+    
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(BACKWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(BACKWARD);
+    
+    delay(2700);
+    
+    MotorLeft1->run(RELEASE);  
+    MotorRight1->run(RELEASE);  
+    MotorLeft2->run(RELEASE);
+    MotorRight2->run(RELEASE);
+    
+    delay(500);
+    
+    last = right;
+    turns = 2;
+    
+    Serial.println("10");
   } 
   
   //move forward across the board
   if ((not done or almost) and last == left and not irreadFront and not irreadRear) {
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(FORWARD);
-  Serial.println("11");
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(FORWARD);
+    
+    Serial.println("11");
   }
    
   //now lets turn again and go the other direction
   if (not done and last == left and a < 200 and b < 200 and c < 200 and d < 200 and irreadFront and irreadRear and ((accumdistance + 3000) < accumtime)){
-  MotorLeft1->run(RELEASE);  
-  MotorRight1->run(RELEASE);  
-  MotorLeft2->run(RELEASE);
-  MotorRight2->run(RELEASE); 
-  Serial.println("12");
-  MotorLeft1->run(BACKWARD);  
-  MotorRight1->run(BACKWARD);  
-  MotorLeft2->run(BACKWARD);
-  MotorRight2->run(BACKWARD);
-  delay(700);
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(BACKWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(BACKWARD);
-  delay(2700);
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(FORWARD);
-  delay(2500);
-  accumdistance = accumdistance + 2500;
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(BACKWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(BACKWARD);
-  delay(2700);
-  MotorLeft1->run(RELEASE);  
-  MotorRight1->run(RELEASE);  
-  MotorLeft2->run(RELEASE);
-  MotorRight2->run(RELEASE);
-  delay(500);
-  last = right;
-  turns = 2;
-  Serial.println("13"); 
-  return;
+    MotorLeft1->run(RELEASE);  
+    MotorRight1->run(RELEASE);  
+    MotorLeft2->run(RELEASE);
+    MotorRight2->run(RELEASE); 
+    
+    Serial.println("12");
+    
+    MotorLeft1->run(BACKWARD);  
+    MotorRight1->run(BACKWARD);  
+    MotorLeft2->run(BACKWARD);
+    MotorRight2->run(BACKWARD);
+    
+    delay(700);
+    
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(BACKWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(BACKWARD);
+    
+    delay(2700);
+    
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(FORWARD);
+    
+    delay(2500);
+    
+    accumdistance = accumdistance + 2500;
+    
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(BACKWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(BACKWARD);
+    
+    delay(2700);
+    
+    MotorLeft1->run(RELEASE);  
+    MotorRight1->run(RELEASE);  
+    MotorLeft2->run(RELEASE);
+    MotorRight2->run(RELEASE);
+    
+    delay(500);
+    
+    last = right;
+    turns = 2;
+    
+    Serial.println("13"); 
+    
+    return;
   }
   
   if (not done and last == right and not irreadFront and not irreadRear) {
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(FORWARD);
-  Serial.println("14");
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(FORWARD);
+    
+    Serial.println("14");
   } 
   
   if (not done and last == right and a < 200 and b < 200 and c < 200 and d < 200 and irreadFront and irreadRear and ((accumdistance + 3000) < accumtime)){
-  MotorLeft1->run(RELEASE);  
-  MotorRight1->run(RELEASE);  
-  MotorLeft2->run(RELEASE);
-  MotorRight2->run(RELEASE);
-  Serial.println("15"); 
-  MotorLeft1->run(BACKWARD);  
-  MotorRight1->run(BACKWARD);  
-  MotorLeft2->run(BACKWARD);
-  MotorRight2->run(BACKWARD);
-  delay(700);
-  MotorLeft1->run(BACKWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(BACKWARD);
-  MotorRight2->run(FORWARD);
-  delay(2700);
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(FORWARD);
-  delay(2500);
-  accumdistance = accumdistance + 2500;
-  MotorLeft1->run(BACKWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(BACKWARD);
-  MotorRight2->run(FORWARD);
-  delay(2700);
-  MotorLeft1->run(RELEASE);  
-  MotorRight1->run(RELEASE);  
-  MotorLeft2->run(RELEASE);
-  MotorRight2->run(RELEASE);
-  delay(500);
-  last = left; 
-  turns = 2;
-  Serial.println("16"); 
+    MotorLeft1->run(RELEASE);  
+    MotorRight1->run(RELEASE);  
+    MotorLeft2->run(RELEASE);
+    MotorRight2->run(RELEASE);
+    
+    Serial.println("15"); 
+    
+    MotorLeft1->run(BACKWARD);  
+    MotorRight1->run(BACKWARD);  
+    MotorLeft2->run(BACKWARD);
+    MotorRight2->run(BACKWARD);
+    
+    delay(700);
+    
+    MotorLeft1->run(BACKWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(BACKWARD);
+    MotorRight2->run(FORWARD);
+    
+    delay(2700);
+    
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(FORWARD);
+    
+    delay(2500);
+    
+    accumdistance = accumdistance + 2500;
+    
+    MotorLeft1->run(BACKWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(BACKWARD);
+    MotorRight2->run(FORWARD);
+    
+    delay(2700);
+    
+    MotorLeft1->run(RELEASE);  
+    MotorRight1->run(RELEASE);  
+    MotorLeft2->run(RELEASE);
+    MotorRight2->run(RELEASE);
+    
+    delay(500);
+    
+    last = left; 
+    turns = 2;
+    
+    Serial.println("16"); 
   } 
+  
   if (not done and last == right and ((accumdistance + 2500) > accumtime) and irreadFront and irreadRear) {
-  MotorLeft1->run(RELEASE);  
-  MotorRight1->run(RELEASE);  
-  MotorLeft2->run(RELEASE);
-  MotorRight2->run(RELEASE);
-  done = 1; 
-  Serial.println("17"); 
-  return; 
+    MotorLeft1->run(RELEASE);  
+    MotorRight1->run(RELEASE);  
+    MotorLeft2->run(RELEASE);
+    MotorRight2->run(RELEASE);
+    
+    done = 1; 
+    
+    Serial.println("17"); 
+    
+    return; 
   }
+  
   if ((not done and not almost) and last == left and ((accumdistance + 2500) > accumtime) and irreadFront and irreadRear) {
-  MotorLeft1->run(RELEASE);  
-  MotorRight1->run(RELEASE);  
-  MotorLeft2->run(RELEASE);
-  MotorRight2->run(RELEASE);
-  almost = 1; 
-  Serial.println("18");
-  return;
+    MotorLeft1->run(RELEASE);  
+    MotorRight1->run(RELEASE);  
+    MotorLeft2->run(RELEASE);
+    MotorRight2->run(RELEASE);
+    
+    almost = 1; 
+    
+    Serial.println("18");
+    
+    return;
   } 
 
   if ((not done and almost) and last == left and ((accumdistance + 2500) > accumtime) and irreadFront and irreadRear) {
-  MotorLeft1->run(RELEASE);  
-  MotorRight1->run(RELEASE);  
-  MotorLeft2->run(RELEASE);
-  MotorRight2->run(RELEASE);
-  almost = 0;
-  done = 1; 
-  Serial.println("19");
+    MotorLeft1->run(RELEASE);  
+    MotorRight1->run(RELEASE);  
+    MotorLeft2->run(RELEASE);
+    MotorRight2->run(RELEASE);
+    
+    almost = 0;
+    done = 1; 
+    
+    Serial.println("19");
   } 
   
   if (done and forwardright and last == right and not turnaround) {
-  MotorLeft1->run(BACKWARD);  
-  MotorRight1->run(BACKWARD);  
-  MotorLeft2->run(BACKWARD);
-  MotorRight2->run(BACKWARD);
-  delay(1000);
-  MotorLeft1->run(BACKWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(BACKWARD);
-  MotorRight2->run(FORWARD); 
-  delay(5400);
-  Serial.println("20"); 
-  turnaround = 1;
+    MotorLeft1->run(BACKWARD);  
+    MotorRight1->run(BACKWARD);  
+    MotorLeft2->run(BACKWARD);
+    MotorRight2->run(BACKWARD);
+    
+    delay(1000);
+    
+    MotorLeft1->run(BACKWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(BACKWARD);
+    MotorRight2->run(FORWARD); 
+    
+    delay(5400);
+    
+    Serial.println("20"); 
+    
+    turnaround = 1;
   }
+  
   if (done and forwardright and turnaround and not irreadFront and not irreadRear) {
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(FORWARD);
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(FORWARD);
   }
+  
   if (done and forwardright and turnaround and irreadFront and irreadRear) {
-  MotorLeft1->run(RELEASE);  
-  MotorRight1->run(RELEASE);  
-  MotorLeft2->run(RELEASE);
-  MotorRight2->run(RELEASE); 
-  Serial.println("21"); 
+    MotorLeft1->run(RELEASE);  
+    MotorRight1->run(RELEASE);  
+    MotorLeft2->run(RELEASE);
+    MotorRight2->run(RELEASE); 
+    
+    Serial.println("21"); 
   }
+  
   if (done and forwardleft and last == left and not turnaround) {
-  MotorLeft1->run(BACKWARD);  
-  MotorRight1->run(BACKWARD);  
-  MotorLeft2->run(BACKWARD);
-  MotorRight2->run(BACKWARD);
-  delay(1000);
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(BACKWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(BACKWARD);
-  delay(5400); 
-  Serial.println("22");
-  turnaround = 1; 
+    MotorLeft1->run(BACKWARD);  
+    MotorRight1->run(BACKWARD);  
+    MotorLeft2->run(BACKWARD);
+    MotorRight2->run(BACKWARD);
+    
+    delay(1000);
+    
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(BACKWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(BACKWARD);
+    
+    delay(5400);
+
+    Serial.println("22");
+    
+    turnaround = 1; 
   }
+  
   if (done and forwardleft and turnaround and not irreadFront and not irreadRear) {
-  MotorLeft1->run(FORWARD);  
-  MotorRight1->run(FORWARD);  
-  MotorLeft2->run(FORWARD);
-  MotorRight2->run(FORWARD);
+    MotorLeft1->run(FORWARD);  
+    MotorRight1->run(FORWARD);  
+    MotorLeft2->run(FORWARD);
+    MotorRight2->run(FORWARD);
   }
+  
   if (done and forwardleft and turnaround and irreadFront and irreadRear) {
-  MotorLeft1->run(RELEASE);  
-  MotorRight1->run(RELEASE);  
-  MotorLeft2->run(RELEASE);
-  MotorRight2->run(RELEASE); 
-  Serial.println("20"); 
+    MotorLeft1->run(RELEASE);  
+    MotorRight1->run(RELEASE);  
+    MotorLeft2->run(RELEASE);
+    MotorRight2->run(RELEASE); 
+    
+    Serial.println("20"); 
   }
 }
