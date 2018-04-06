@@ -1,0 +1,122 @@
+
+<!DOCTYPE HTML>
+<!--
+	Hyperspace by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+
+<!--
+	Senior Design
+	Mississippi State University
+	Solar Panel Automated Cleaner Website
+	Team SPAC: Dylan Nolan, Daniel Coats, Scott Watson, Aaron Hale
+-->
+
+<html>
+
+<!--
+	Give a header. Were going to give a title of SPAC which is what is seen in the tab of the website.
+-->
+
+	<head>
+		<title>SPAC</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+	</head>
+	
+<!--
+	Now we need a body. This has everything within the website.
+-->
+
+	<body>
+
+		<!-- Sidebar
+		The Sidebar has the buttons that you can click to navigate through the website quickly. 
+		Just change the names to what you want the names of the buttons to be.
+		-->
+			<section id="sidebar">
+				<div class="inner">
+					<nav>
+						<ul>
+							<li><a href="index.html">Home</a></li>
+							<li><a href="about.html">About Us</a></li>
+							<li><a href="deliverables.html">Deliverables</a></li>
+							<li><a href="datasheets.html">Documentation</a></li>
+						</ul>
+					</nav>
+				</div>
+			</section>
+
+		<!-- Wrapper
+		We need to designate that we are using wrapper. The design template has a few to choose from.
+		-->
+			<div id="wrapper">
+
+				<!-- Intro
+				Intro is the first section of the website. It is at the very top. This is where I 
+				put a little information about the project and what it is about. I had trouble with
+				color of the text bleeding into the background picture so I used text-shadow to help 
+				with that. I also designated colors "#ffffff" which is white. This can be changed.
+				-->
+				
+					<section id="intro" class="wrapper style1 fullscreen fade-up">
+						<div class="inner">
+							<style>
+							p {
+								text-shadow: 2px 2px 2px #000000;
+							}
+							h1 {
+								text-shadow: 2px 2px 2px #000000;
+							}
+							</style>
+							<h1 style="color:#ffffff"><center>Solar Panel Automated Cleaner</center></h1>
+							<center><b><p style="color:#ffffff">The best way to clean your solar panels without the price or labor!<br />
+							SPAC will move around your solar panels scrubbing all of the dirt<br />
+							and grime to give you the most efficient use of your panels.<br /></p></b></center>
+							<center><img src="images/battery2.png"></center>
+							<center><b><p style="color:#ffffff">Rechargeable battery that will last a full cleaning.<br />
+							Charge it after every use and it will be ready for the next time!</p></b></center>
+							<h1 style="color:#ffffff"><center>30%</center></h1>
+							<center><b><p style="color:#ffffff">Cleaning your solar panels can give you upwards<br />
+							of 30% better efficiency depending on where you live<br />
+							and the angle of the panels.</p></b></center>
+							<center><img src="images/wifi.png"></center>
+							<center><b><p style="color:#ffffff">Connect to SPAC with your phone and keep up<br />
+							with battery life, solution level, and more!</p></b></center>
+						</div>
+					</section>
+
+			</div>
+
+		<!-- Footer
+		This is the bottom of the website. We left the design on there to give HTML5 UP credit.
+		-->
+		
+			<footer id="footer" class="wrapper style1-alt">
+				<div class="inner">
+					<ul class="menu">
+						<li>“Sunset over solar panels,” [Online]. Available at: https://cleantechnica.com/2015/01/13/a-solar-ceo-wants-to-end-the-investment-tax-credit-why/shutterstock_189889871/. Accessed on: Feb. 13, 2018.</li>
+						<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+				</div>
+			</footer>
+
+		<!-- Scripts
+		These just reference different files for the website. I didn't change any of this.
+		-->
+		
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/skel.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
