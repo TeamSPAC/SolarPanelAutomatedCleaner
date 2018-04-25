@@ -1,0 +1,154 @@
+<!DOCTYPE HTML>
+<!--
+	Hyperspace by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+
+<!--
+	Senior Design
+	Mississippi State University
+	Solar Panel Automated Cleaner Website
+	Team SPAC: Dylan Nolan, Daniel Coats, Scott Watson, Aaron Hale
+-->
+
+<html>
+
+<!--
+	Give a header. Were going to give a title of Deliverables which is what is seen in the tab of the website.
+-->
+
+	<head>
+		<title>Deliverables</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+	</head>
+	
+<!--
+	Now we need a body. This has everything within the website.
+-->
+
+	<body>
+
+		<!-- Sidebar
+		The Sidebar has the buttons that you can click to navigate through the website quickly. 
+		Just change the names to what you want the names of the buttons to be.
+		-->
+			<section id="sidebar">
+				<div class="inner">
+					<nav>
+						<ul>
+							<li><a href="index.html">Home</a></li>
+							<li><a href="about.html">About Us</a></li>
+							<li><a href="deliverables.html">Deliverables</a></li>
+							<li><a href="datasheets.html">Documentation</a></li>
+							<li><a href="gallery.html">Gallery</a></li>
+						</ul>
+					</nav>
+				</div>
+			</section>
+
+		<!-- Wrapper
+		We need to designate that we are using wrapper. The design template has a few to choose from.
+		-->
+			<div id="wrapper">
+			
+			<section id="two" class="table-wrapper">
+									<h2><Br /><Br />Deliverables</h2>
+									<h3>Senior Design I</h3>
+										<table>
+											<thead>
+												<tr>
+													<th>Document</th>
+													<th>Draft</th>
+													<th>Final</th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td>Product Specification</td>
+													<td><a href="assets\docs\spac_problemspec_draft.pptx"><img src="images\ppt.jpg"></a></td>
+													<td><a href="assets\docs\spac_problemspec_final.pptx"><img src="images\ppt.jpg"></a></td>
+												</tr>
+												<tr>
+													<td>Problem Statement</td>
+													<td><a href="assets\docs\spac_problemstatement_draft.docx"><img src="images\word.png"></a></td>
+													<td><a href="assets\docs\spac_problemstatement_final.docx"><img src="images\word.png"></a></td>
+												</tr>
+												<tr>
+													<td>Design Constraint</td>
+													<td><a href="assets\docs\spac_designconstraints_draft.docx"><img src="images\word.png"></a></td>
+													<td><a href="assets\docs\spac_designconstraints_final.docx"><img src="images\word.png"></td>
+												</tr>
+												<tr>
+													<td>Approach</td>
+													<td><a href="assets\docs\spac_approach_draft.docx"><img src="images\word.png"></a></td>
+													<td><a href="assets\docs\spac_approach_final.docx"><img src="images\word.png"></a></td>
+												</tr>
+												<tr>
+													<td>Midterm Presentation</td>
+													<td><a href="assets\docs\spac_midsemesterpresentation_draft.pptx"><img src="images\ppt.jpg"></a></td>
+													<td><a href="assets\docs\spac_midsemesterpresentation_final.pptx"><img src="images\ppt.jpg"></a></td>
+												</tr>
+												<tr>
+													<td>Executive Summary</td>
+													<td><a href="assets\docs\spac_executivesummary_draft.docx"><img src="images\word.png"></a></td>
+													<td><a href="assets\docs\spac_executivesummary_final.docx"><img src="images\word.png"></a></td>
+												</tr>
+												<tr>
+													<td>Evaluation Document</td>
+													<td><a href="assets\docs\spac_evaluation_draft.docx"><img src="images\word.png"></a></td>
+													<td><a href="assets\docs\spac_evaluation_final.docx"><img src="images\word.png"></a></td>
+												</tr>
+												<tr>
+													<td>Final Presentation</td>
+													<td><a href="assets\docs\spac_endsemesterpresentation_draft.pptx"><img src="images\ppt.jpg"></a></td>
+													<td><a href="assets\docs\spac_endsemesterpresentation_final.pptx"><img src="images\ppt.jpg"></td>
+												</tr>
+												<tr>
+													<td>Final Design Document</td>
+													<td></td>
+													<td></td>
+												</tr>
+											</tbody>
+											<tfoot>
+												<tr>
+													<td colspan="2"></td>
+													<td></td>
+												</tr>
+											</tfoot>
+										</table>
+					</section>
+					
+					</div>
+
+		<!-- Footer
+		This is the bottom of the website. We left the design on there to give HTML5 UP credit.
+		-->
+		
+			<footer id="footer" class="wrapper style1-alt">
+				<div class="inner">
+					<ul class="menu">
+						<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+				</div>
+			</footer>
+
+		<!-- Scripts
+		These just reference different files for the website. I didn't change any of this.
+		-->
+		
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/skel.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
