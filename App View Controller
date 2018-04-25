@@ -1,0 +1,77 @@
+//
+
+//  ViewController.swift
+
+//  SPACapp1.1
+
+//
+
+//  Created by Scott Watson on 4/7/18.
+
+//  Copyright © 2018 TEAMSPAC. All rights reserved.
+
+//
+
+
+import UIKit
+
+
+class ViewController: UIViewController {
+
+    @IBOutlet weak var WebView: UIWebView!
+
+    override func viewDidLoad()
+
+    {
+
+  	userInfo: nil, repeats: true)
+
+        super.viewDidLoad()
+
+        // Do any additional setup after loading the view, typically from a nib.
+
+        
+
+    }
+
+
+    override func didReceiveMemoryWarning()
+
+    {
+
+        super.didReceiveMemoryWarning()
+
+        // Dispose of any resources that can be recreated.
+
+    }
+
+
+    var POWER_ON_URL = "http://192.168.4.1/GH"
+
+    var POWER_OFF_URL = "http://192.168.4.1/GL"
+
+    
+
+    @IBAction func POWER(_ sender: AnyObject)
+
+    {
+
+        let requestURL = NSURL(string: POWER_ON_URL)
+
+        let request = NSURLRequest(url: requestURL! as URL)
+
+        WebView.loadRequest(request as URLRequest)
+
+    }
+
+    @IBAction func Off(_ sender: AnyObject)
+
+    {
+
+        let requestURL = NSURL(string: POWER_OFF_URL)
+
+        let request = NSURLRequest(url: requestURL! as URL)
+
+        WebView.loadRequest(request as URLRequest)
+
+    }
