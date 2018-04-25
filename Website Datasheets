@@ -1,0 +1,189 @@
+<!DOCTYPE HTML>
+<!--
+	Hyperspace by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+
+<!--
+	Senior Design
+	Mississippi State University
+	Solar Panel Automated Cleaner Website
+	Team SPAC: Dylan Nolan, Daniel Coats, Scott Watson, Aaron Hale
+-->
+
+<html>
+
+<!--
+	Give a header. Were going to give a title of Documentation which is what is seen in the tab of the website.
+-->
+
+	<head>
+		<title>Documentation</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+	</head>
+	
+<!--
+	Now we need a body. This has everything within the website.
+-->
+
+	<body>
+
+		<!-- Sidebar
+		The Sidebar has the buttons that you can click to navigate through the website quickly. 
+		Just change the names to what you want the names of the buttons to be.
+		-->
+			<section id="sidebar">
+				<div class="inner">
+					<nav>
+						<ul>
+							<li><a href="index.html">Home</a></li>
+							<li><a href="about.html">About Us</a></li>
+							<li><a href="deliverables.html">Deliverables</a></li>
+							<li><a href="datasheets.html">Documentation</a></li>
+							<li><a href="gallery.html">Gallery</a></li>
+						</ul>
+					</nav>
+				</div>
+			</section>
+
+		<!-- Wrapper
+		We need to designate that we are using wrapper. The design template has a few to choose from.
+		-->
+			<div id="wrapper">
+			
+			<section id="three" class="table-wrapper">
+									<h2><br /><br />Documentation</h2>
+									<h3>Senior Design I</h3>
+										<table>
+											<thead>
+												<tr>
+													<th>Component</th>
+													<th></th>
+													<th><center>Documentation</center></th>
+												</tr>
+											</thead>
+											<tbody>
+												<tr>
+													<td>Code</td>
+													<td></td>
+													<td><center><a href="https://github.com/TeamSPAC/SolarPanelAutomatedCleaner">Visit our GitHub account for code</a></center></td>
+												</tr>
+												<tr>
+													<td>Wiring Schematic</td>
+													<td></td>
+													<td><center><a href="images/wiring.jpg">Check out our wiring schematic</a></center></td>
+												</tr>
+												<tr>
+													<td>Motor Shield</td>
+													<td></td>
+													<td><center><a href="assets\data\adafruit-motor-shield.pdf"><img src="images\pdf.jpg"></a></center></td>
+												</tr>
+												<tr>
+													<td>IR Sensors</td>
+													<td></td>
+													<td><center><a href="assets\data\E18-D80NK.pdf"><img src="images\pdf.jpg"></a></center></td>
+												</tr>
+												<tr>
+													<td>UltraSonic Sensors</td>
+													<td></td>
+													<td><center><a href="assets\data\HCSR04.pdf"><img src="images\pdf.jpg"></a></center></td>
+												</tr>
+												<tr>
+													<td>Control Board</td>
+													<td></td>
+													<td><center><a href="assets\data\MEGA2560.pdf"><img src="images\pdf.jpg"></a></center></td>
+												</tr>
+												<tr>
+													<td>WiFi Module</td>
+													<td></td>
+													<td><center><a href="assets\data\esp01.pdf"><img src="images\pdf.jpg"></a></center></td>
+												</tr>
+												<tr>
+													<td>Track Motors</td>
+													<td></td>
+													<td><center><a href="assets\data\vex-motors.pdf"><img src="images\pdf.jpg"></a></center></td>
+												</tr>
+												<tr>
+													<td>Voltage Regulator</td>
+													<td></td>
+													<td><center><a href="assets\data\LM2596.pdf"><img src="images\pdf.jpg"></a></center></td>
+												</tr>
+												<tr>
+													<td>Compass</td>
+													<td></td>
+													<td><center><a href="assets\data\compass.pdf"><img src="images\pdf.jpg"></a></center></td>
+												</tr>
+												<tr>
+													<td>Water Pump</td>
+													<td></td>
+													<td><center><a href="assets\data\yeecopump.pdf"><img src="images\pdf.jpg"></a></center></td>
+												</tr>
+												<tr>
+													<td>Voltage Sensor</td>
+													<td></td>
+													<td><center><a href="assets\data\voltagesensor.pdf"><img src="images\pdf.jpg"></a></center></td>
+												</tr>
+												<tr>
+													<td>5V Relay</td>
+													<td></td>
+													<td><center><a href="assets\data\relay.pdf"><img src="images\pdf.jpg"></a></center></td>
+												</tr>
+												<tr>
+													<td>Weight Sensor</td>
+													<td></td>
+													<td><center><a href="assets\data\hx711_english.pdf"><img src="images\pdf.jpg"></a></center></td>
+												</tr>
+												<tr>
+													<td>Servo Motor</td>
+													<td></td>
+													<td><center></center></td>
+												</tr>
+												<tr>
+													<td>Sponge Motor</td>
+													<td></td>
+													<td><center></center></td>
+												</tr>
+											</tbody>
+											<tfoot>
+												<tr>
+													<td colspan="2"></td>
+													<td></td>
+												</tr>
+											</tfoot>
+										</table>
+					</section>
+
+			</div>
+
+		<!-- Footer
+		This is the bottom of the website. We left the design on there to give HTML5 UP credit.
+		-->
+		
+			<footer id="footer" class="wrapper style1-alt">
+				<div class="inner">
+					<ul class="menu">
+						<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+				</div>
+			</footer>
+
+		<!-- Scripts
+		These just reference different files for the website. I didn't change any of this.
+		-->
+		
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/skel.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
