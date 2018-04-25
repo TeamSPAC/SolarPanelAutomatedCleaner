@@ -1,0 +1,174 @@
+<!DOCTYPE HTML>
+<!--
+	Hyperspace by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+
+<!--
+	Senior Design
+	Mississippi State University
+	Solar Panel Automated Cleaner Website
+	Team SPAC: Dylan Nolan, Daniel Coats, Scott Watson, Aaron Hale
+-->
+
+<html>
+
+<!--
+	Give a header. Were going to give a title of About which is what is seen in the tab of the website.
+-->
+
+	<head>
+		<title>About</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+	</head>
+	
+<!--
+	Now we need a body. This has everything within the website.
+-->
+
+	<body>
+
+		<!-- Sidebar
+		The Sidebar has the buttons that you can click to navigate through the website quickly. 
+		Just change the names to what you want the names of the buttons to be.
+		-->
+			<section id="sidebar">
+				<div class="inner">
+					<nav>
+						<ul>
+							<li><a href="index.html">Home</a></li>
+							<li><a href="about.html">About Us</a></li>
+							<li><a href="deliverables.html">Deliverables</a></li>
+							<li><a href="datasheets.html">Documentation</a></li>
+							<li><a href="gallery.html">Gallery</a></li>
+						</ul>
+					</nav>
+				</div>
+			</section>
+			
+		<!-- Wrapper
+		We need to designate that we are using wrapper. The design template has a few to choose from.
+		-->
+		<div id="wrapper">
+			
+			<section id="one" class="wrapper style2 spotlights">
+						<section>
+						<br /><br />
+							<a href="#" class="image left"><img src="images/Dylan.jpg" alt="" data-position="top center" /></a>
+							<div class="content">
+								<div class="inner">
+									<h2>Team Lead: Dylan Nolan</h2>
+									<p1>Electrical Engineer<br />
+									Hello and thank you for visiting our webpage. Allow me to tell you a little about myself. In 2015, I received
+									my associates in arts from Meridian Community College before moving to Mississippi State University to continue
+									my studies in electrical engineering. I am now a senior studying at Mississippi State University, and my background
+									is in industrial automation and controls. In the summer of 2016, I worked at CertainTeed in Meridian, MS, and the 
+									following summer of 2017, I worked at Steel Dynamics Inc. in Columbus, MS. My personal philosophy in life is that 
+									it’s the little things that make the biggest difference. Andy Andrews, an author from Orange Beach, Alabama, writes,
+									“…when small moves are repeated consistently over time, you’ll one day look up and realize you’ve traveled all the way 
+									from where you were to exactly where you always dreamed you’d be.”1<br /> 
+									1 Andrews, A. (2017). The little things: why you really should sweat the small stuff. Nashville: W Publishing Group.<br /><br /></p1>
+									
+									<p1>Resume : <a href="assets\docs\Dylan_Resume'.pdf"><img src="images\pdf.jpg"></a></p1>
+								</div>
+							</div>
+						</section>
+						
+						<section>
+							<div class="content">
+								<div class="inner">
+									<h2>Aaron Hale</h2>
+									<p1>Electrical Engineer<br />
+									I received my associate degree from Holmes Community College before transferring to Mississippi State University.
+									I've always enjoyed working with my hands, whether that be building something with wood, or working with electronics.
+									As an Electrical Engineering Co-op, I worked for Weyerhauser the Summer of 2016 and International Paper for the entire 2017 year.
+									I loved the process control aspect more than anything because I got to work hands on with all different kinds of devices.
+									I gained experience with PLCs, Delta-V, motors, drives, sensors, and more. I believe these attributes will
+									help me in this design course and with what I aspire to be in the future.<br /><br /></p1>
+									
+									<p1>Resume : <a href="assets\docs\ahale1pg(1-25-18).pdf"><img src="images\pdf.jpg"></a></p1>
+								</div>
+							</div>
+							<a href="#" class="image right"><img src="images/Aaron.jpg" alt="" data-position="top center" /></a>
+						</section>
+						
+						<section>
+							<a href="#" class="image left"><img src="images/Daniel.jpg" alt="" data-position="top center" /></a>
+							<div class="content">
+								<div class="inner">
+									<h2>Daniel Coats</h2>
+									<p1>Electrical Engineer<br />
+									Hi, I’m Daniel and I transferred to Mississippi State after I received my Associate of Art from Jones Junior College. 
+									From an early age, I have enjoyed problem solving and helping others. These two factors led me to majoring in Electrical Engineering, 
+									where I can use my education to aid the general public. Making life easier is a key factor in this design, and I plan to apply the 
+									knowledge I gain from this process in any future employment.  I also enjoy traveling to new places with my wife and participating in 
+									activities around our church and community. Currently I am a member of the Mississippi Army National Guard and, upon the completion of 
+									my degree, look forward to commissioning as a second lieutenant. 
+									<br /><br /></p1>
+									
+									<p1>Resume : <a href="assets\docs\Resume Daniel Coats.pdf"><img src="images\pdf.jpg"></a></p1>
+								</div>
+							</div>
+						</section>
+						
+						<section>
+							<div class="content">
+								<div class="inner">
+									<h2>Scott Watson</h2>
+									<p1>Electrical Engineer<br />
+									I loved math and science in high school, and decided that I wanted a career in which I could apply
+									those subjects. Studying electrical engineering at MSU has also allowed me to pursue my interest 
+									in design and problem solving. I believe this project will be an incredible learning experience that 
+									will help create a foundation for my future in EE.<br /><br /></p1>
+									
+									<p1>Resume : <a href="assets\docs\Scott Watson electrical-engineering-resume.pdf"><img src="images\pdf.jpg"></a><p1>	
+								</div>
+							</div>
+							<a href="#" class="image right"><img src="images/Scott.jpg" alt="" data-position="top center" /></a>
+						</section>
+						
+						<section>
+							<a href="#" class="image left"><img src="images/follett.jpg" alt="" data-position="top center" /></a>
+							<div class="content">
+								<div class="inner">
+									<h2>Advisor: Randy Follett</h2>
+									<p1>Electrical and Computer Engineering Department<p1>
+								</div>
+							</div>
+						</section>
+						
+					</section>
+					</div>
+
+		<!-- Footer
+		This is the bottom of the website. We left the design on there to give HTML5 UP credit.
+		-->
+		
+			<footer id="footer" class="wrapper style1-alt">
+				<div class="inner">
+					<ul class="menu">
+						<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+				</div>
+			</footer>
+
+		<!-- Scripts
+		These just reference different files for the website. I didn't change any of this.
+		-->
+		
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/skel.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>
